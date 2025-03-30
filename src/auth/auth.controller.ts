@@ -42,7 +42,7 @@ export class AuthController {
 		@Body() user: User
 	) {
 		const userData = await this.AuthService.registration(user)
-		await this.mailService.sendUserConfirmation(user);
+		// await this.mailService.sendUserConfirmation(user);
 
 		let refreshToken = userData.refreshToken
 		_.omit(userData, "refreshToken");
@@ -76,50 +76,6 @@ export class AuthController {
 			}
 		)
 			.json(userData)
-	}
-
-	@Throttle({
-		default: {
-			ttl: 60000,
-			limit: 4,
-			blockDuration: 5 * 60000
-		}
-	})
-	@HttpCode(HttpStatus.CREATED)
-	@Post('register-student')
-	async registerStudent(
-		@Res({ passthrough: true }) res: Response,
-		@Body() user: User
-	) {
-		const userData = await this.AuthService.registration(user)
-		// await this.mailService.sendUserConfirmation(user);
-
-		let refreshToken = userData.refreshToken
-		_.omit(userData, "refreshToken");
-		// delete userData.refreshToken
-
-		// dont send cookies
-		res.json(userData)
-		// .cookie(
-		// 	'refreshToken',
-		// 	refreshToken,
-		// 	{
-		// 		maxAge: 30 * 24 * 60 * 60 * 1000,
-		// 		httpOnly: !eval(process.env.HTTPS),
-		// 		secure: eval(process.env.HTTPS),
-		// 		domain: process.env?.DOMAIN ?? ''
-		// 	}
-		// ).cookie(
-		// 	'token',
-		// 	userData.accessToken,
-		// 	{
-		// 		maxAge: 7 * 24 * 60 * 60 * 1000,
-		// 		httpOnly: !eval(process.env.HTTPS),
-		// 		secure: eval(process.env.HTTPS),
-		// 		domain: process.env?.DOMAIN ?? ''
-		// 	}
-		// )
-
 	}
 
 	@Throttle({
