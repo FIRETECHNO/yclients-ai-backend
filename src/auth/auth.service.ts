@@ -73,7 +73,7 @@ export class AuthService {
     userData = this.TokenService.validateAccessToken(accessToken)
 
     if (userData != null) {
-      user = await this.UserModel.findById(userData._id).populate("sentSolutions")
+      user = await this.UserModel.findById(userData._id)
 
       return {
         refreshToken: refreshToken,
@@ -94,7 +94,7 @@ export class AuthService {
     if (!userData || !tokenFromDb) {
       throw ApiError.UnauthorizedError()
     }
-    let populated = await this.UserModel.findById(userData._id).populate("sentSolutions")
+    let populated = await this.UserModel.findById(userData._id)
     user = populated?.toObject()
 
     if (userData.password !== user.password) {
@@ -173,6 +173,6 @@ export class AuthService {
   }
 
   async getAllUsers() {
-    return await this.UserModel.find({}).populate('myCourses')
+    return await this.UserModel.find({})
   }
 }
