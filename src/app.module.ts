@@ -15,6 +15,7 @@ import { AuthModule } from './auth/auth.module';
 import { S3Module } from './s3/s3.module';
 import { MailModule } from './mail/mail.module';
 import { ChatModule } from './chat/chat.module';
+import { MatchingModule } from './matching/matching.module';
 
 @Module({
   imports: [
@@ -37,6 +38,7 @@ import { ChatModule } from './chat/chat.module';
     S3Module,
     MailModule,
     ChatModule,
+    MatchingModule,
   ],
   controllers: [AppController],
   providers: [AppService,
