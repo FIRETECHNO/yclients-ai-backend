@@ -1,7 +1,9 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import mongoose, { HydratedDocument } from 'mongoose';
+import mongoose, { HydratedDocument, Types } from 'mongoose';
 import type { Role } from '../../roles/interfaces/role.interface';
 export type UserDocument = HydratedDocument<UserClass>;
+
+import { Match } from '../../matching/schemas/match.schema';
 
 @Schema()
 export class UserClass {
@@ -44,6 +46,13 @@ export class UserClass {
     required: false
   })
   avatars: string[];
+
+  @Prop({
+    type: [Types.ObjectId],
+    default: [],
+    required: false
+  })
+  matches: Match[] // array of _ids, but we can populate it
 }
 
 export const UserSchema = SchemaFactory.createForClass(UserClass);
