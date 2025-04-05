@@ -48,11 +48,10 @@ export class UserClass {
   avatars: string[];
 
   @Prop({
-    type: [Types.ObjectId],
+    type: [{ type: Types.ObjectId, ref: 'Match' }],
     default: [],
-    required: false
   })
-  matches: Match[] // array of _ids, but we can populate it
+  matches: Types.ObjectId[];
 }
 
 export const UserSchema = SchemaFactory.createForClass(UserClass);

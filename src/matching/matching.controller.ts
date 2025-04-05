@@ -29,7 +29,7 @@ export class MatchingController {
     private readonly matchingService: MatchingService
   ) { }
 
-  @Get('')
+  @Get('/')
   async getAll() {
     return await this.UserModel.find({})
   }
@@ -56,5 +56,18 @@ export class MatchingController {
     }
 
     return true;
+  }
+
+  @Get('populate-matches')
+  async populateMatches(
+    @Query("user_id") userId: string
+  ) {
+    return await this.UserModel.findById(userId).populate({
+      path: "matches",
+      populate: {
+        path: "receiver",
+        select: "name surname email"
+      }
+    })
   }
 }

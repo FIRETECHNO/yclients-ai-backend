@@ -6,15 +6,17 @@ import { UserClass } from 'src/user/schemas/user.schema';
 export class Match {
   @Prop({
     type: Types.ObjectId,
+    ref: "User",
     required: true
   })
-  receiver: UserClass
+  receiver: Types.ObjectId
 
   @Prop({
     type: Types.ObjectId,
+    ref: "User",
     required: true
   })
-  sender: UserClass
+  sender: Types.ObjectId
 
   @Prop({
     type: String,
