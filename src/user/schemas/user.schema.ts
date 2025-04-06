@@ -52,6 +52,12 @@ export class UserClass {
     default: [],
   })
   matches: Types.ObjectId[];
+
+  @Prop({
+    type: [{ type: Types.ObjectId, ref: 'Chat' }],
+    default: [],
+  })
+  chats: Types.ObjectId[];
 }
 
 export const UserSchema = SchemaFactory.createForClass(UserClass);

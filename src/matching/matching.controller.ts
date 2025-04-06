@@ -12,12 +12,13 @@ import {
 } from '@nestjs/common';
 
 import { MatchingService } from './matching.service';
+import { ChatService } from 'src/chat/chat.service';
 
 import ApiError from 'src/exceptions/errors/api-error'
 
 // all aboout MongoDB
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { UserClass } from '../user/schemas/user.schema';
 import { Match } from './schemas/match.schema';
 
@@ -26,7 +27,8 @@ export class MatchingController {
   constructor(
     @InjectModel('User') private UserModel: Model<UserClass>,
     @InjectModel('Match') private MatchModel: Model<Match>,
-    private readonly matchingService: MatchingService
+    private readonly matchingService: MatchingService,
+    private ChatService: ChatService,
   ) { }
 
   @Get('/')
@@ -77,5 +79,31 @@ export class MatchingController {
         select: fieldsToPopulate,
       },
     })
+  }
+
+  @Post("/accept-match")
+  async acceptMatch(
+    @Body('matchId') matchId: string,
+    @Body('senderId') senderId: string,
+    @Body('receiverId') receiverId: string,
+  ) {
+    let sender = await this.UserModel.findById(senderId);
+    let receiver = await this.UserModel.findById(receiverId);
+
+    if (!sender) throw ApiError.NotFound(`Пользователь с _id ${senderId} не найден`);
+    if (!receiver) throw ApiError.NotFound(`Пользователь с _id ${receiverId} не найден`);
+
+    // clear collection
+    await this.MatchModel.findByIdAndDelete(matchId);
+
+    let chatId = await this.ChatService.createChat(senderId, receiverId);
+
+    sender.chats.push(chatId);
+    receiver.chats.push(chatId);
+
+    sender.markModified("chats")
+    receiver.markModified("chats")
+
+    return [await sender.save(), await receiver.save()]
   }
 }
