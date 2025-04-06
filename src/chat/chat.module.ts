@@ -1,13 +1,18 @@
 import { Module } from '@nestjs/common';
+import { MongooseModule } from '@nestjs/mongoose';
 import { ChatService } from './chat.service';
-import { ChatController } from './chat.controller';
-import { ChatGateway } from "./chat.gateway"
+import { ChatGateway } from './chat.gateway';
 
+import MessageModel from "src/message/models/message.model"
 import ChatModel from './models/chat.model';
 
 @Module({
-  controllers: [ChatController],
-  imports: [ChatModel],
-  providers: [ChatService, ChatGateway],
+  imports: [
+    // Регистрируем схему Message для использования в этом модуле
+    MessageModel,
+    ChatModel
+  ],
+  // Регистрируем Gateway и Service как провайдеры
+  providers: [ChatGateway, ChatService],
 })
 export class ChatModule { }

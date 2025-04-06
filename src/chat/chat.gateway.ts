@@ -1,28 +1,89 @@
-// src/chat/chat.gateway.ts
-import { WebSocketGateway, SubscribeMessage, MessageBody, WebSocketServer, ConnectedSocket } from '@nestjs/websockets';
+import {
+  SubscribeMessage,
+  WebSocketGateway,
+  WebSocketServer,
+  OnGatewayConnection,
+  OnGatewayDisconnect,
+  MessageBody,
+  ConnectedSocket,
+} from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
+import { ChatService } from './chat.service';
+import { Logger } from '@nestjs/common';
 
-@WebSocketGateway({ cors: true })
-export class ChatGateway {
-  @WebSocketServer()
-  server: Server;
+// DTO для входящего сообщения от клиента
+class SendMessageDto {
+  roomId: string;
+  content: string;
+}
 
+// Настраиваем CORS и другие параметры по необходимости
+@WebSocketGateway({ cors: { origin: '*' /* Или ваш Nuxt URL */ } })
+export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
+  @WebSocketServer() server: Server; // Экземпляр сервера Socket.IO
+  private readonly logger = new Logger(ChatGateway.name);
+
+  constructor(private readonly chatService: ChatService) { }
+
+  handleConnection(client: Socket) {
+    this.logger.log(`Клиент подключен: ${client.id}`);
+    // Здесь можно добавить логику аутентификации и присоединения к комнатам
+  }
+
+  handleDisconnect(client: Socket) {
+    this.logger.log(`Клиент отключен: ${client.id}`);
+    // Логика выхода из комнат
+  }
+
+  // Обработка события 'sendMessage' от клиента
+  @SubscribeMessage('sendMessage')
+  async handleMessage(
+    @MessageBody() payload: SendMessageDto,
+    @ConnectedSocket() client: Socket,
+  ): Promise<void> { // Часто не возвращаем явный ответ на сообщение чата
+    this.logger.debug(`Получено сообщение от ${client.id} для комнаты ${payload.roomId}`);
+
+    // !!! Важно: Получите ID пользователя после аутентификации !!!
+    // const userId = client.data.userId; // Пример, если вы сохраняете ID в данных сокета
+    const userId = 'mockUserId'; // Замените реальным ID
+
+    if (!userId) {
+      client.emit('error', 'Требуется аутентификация.');
+      return;
+    }
+
+    const messageData = {
+      roomId: payload.roomId,
+      senderId: userId,
+      content: payload.content,
+    };
+
+    // 1. Добавляем сообщение в буфер через сервис
+    this.chatService.addMessageToBatch(messageData);
+
+    // 2. **НЕМЕДЛЕННО** отправляем сообщение другим клиентам в комнате
+    //    (Они увидят сообщение ДО его сохранения в БД!)
+    const broadcastPayload = {
+      ...messageData,
+      // Можно добавить дополнительные поля, например, имя отправителя
+      senderName: 'Mock User', // Получите реальное имя пользователя
+      timestamp: new Date().toISOString(), // Временная метка для отображения
+    };
+    this.server.to(payload.roomId).emit('newMessage', broadcastPayload);
+
+    // Подтверждение отправки клиенту (опционально)
+    // client.emit('messageSentAck', { tempId: payload.tempId }); // Если у сообщений есть временный ID с клиента
+  }
+
+  // Пример обработчика для входа в комнату
   @SubscribeMessage('joinRoom')
-  handleJoinRoom(@MessageBody() room: string, @ConnectedSocket() socket: Socket) {
-    socket.join(room); // Подключаем пользователя к комнате (чату)
-  }
-
-  @SubscribeMessage('leaveRoom')
-  handleLeaveRoom(@MessageBody() room: string, @ConnectedSocket() socket: Socket) {
-    socket.leave(room); // Отключаем пользователя от комнаты (чата)
-  }
-
-  @SubscribeMessage('message')
-  handleMessage(
-    @MessageBody() data: { sender: string; message: string; room: string },
-    @ConnectedSocket() socket: Socket,
-  ) {
-    // Отправляем сообщение только в указанную комнату
-    this.server.to(data.room).emit('message', data);
+  handleJoinRoom(
+    @MessageBody() roomId: string,
+    @ConnectedSocket() client: Socket,
+  ): void {
+    if (!roomId) return;
+    client.join(roomId);
+    this.logger.log(`Клиент ${client.id} вошел в комнату: ${roomId}`);
+    client.emit('joinedRoom', `Вы успешно вошли в комнату ${roomId}`);
   }
 }
