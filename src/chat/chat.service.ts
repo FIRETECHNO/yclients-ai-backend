@@ -23,6 +23,6 @@ export class ChatService {
       }
     )
 
-    return new Promise(() => chatFromDb._id);
+    return chatFromDb._id;
   }
 }
