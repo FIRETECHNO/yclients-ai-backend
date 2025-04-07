@@ -31,7 +31,7 @@ export class MatchingController {
     private ChatService: ChatService,
   ) { }
 
-  @Get('/')
+  @Get('/get-matches')
   async getAll() {
     return await this.UserModel.find({})
   }
@@ -57,7 +57,7 @@ export class MatchingController {
       throw ApiError.NotFound(`Пользователь с _id ${likedUserId} не найден`)
     }
 
-    return true;
+    return { success: true };
   }
 
   @Get('populate-matches')
@@ -81,7 +81,7 @@ export class MatchingController {
     })
   }
 
-  @Post("/accept-match")
+  @Post("accept-match")
   async acceptMatch(
     @Body('matchId') matchId: string,
     @Body('senderId') senderId: string,
