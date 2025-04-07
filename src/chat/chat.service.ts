@@ -10,7 +10,7 @@ import { ChatClass } from './schemas/chat.schema';
 // DTO для создания сообщения
 interface CreateMessageDto {
   roomId: string | Types.ObjectId;
-  senderId: string | Types.ObjectId;
+  sender: string | Types.ObjectId;
   content: string;
 }
 
@@ -59,7 +59,7 @@ export class ChatService { // Или MessageService
       // Преобразуем DTO в объекты с ObjectId перед вставкой
       const documentsToInsert = messagesToSave.map(msg => ({
         ...msg,
-        senderId: new Types.ObjectId(msg.senderId) // Убедимся, что senderId это ObjectId
+        senderId: new Types.ObjectId(msg.sender) // Убедимся, что senderId это ObjectId
       }));
       await this.messageModel.insertMany(documentsToInsert, { ordered: false });
       this.logger.log(`Успешно сохранен пакет из ${messagesToSave.length} сообщений.`);

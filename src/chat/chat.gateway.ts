@@ -14,6 +14,8 @@ import { Logger } from '@nestjs/common';
 // DTO для входящего сообщения от клиента
 class SendMessageDto {
   roomId: string;
+  user: string;
+  userName: string;
   content: string;
 }
 
@@ -44,17 +46,10 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     this.logger.debug(`Получено сообщение от ${client.id} для комнаты ${payload.roomId}`);
 
     // !!! Важно: Получите ID пользователя после аутентификации !!!
-    // const userId = client.data.userId; // Пример, если вы сохраняете ID в данных сокета
-    const userId = 'mockUserId'; // Замените реальным ID
-
-    if (!userId) {
-      client.emit('error', 'Требуется аутентификация.');
-      return;
-    }
-
     const messageData = {
       roomId: payload.roomId,
-      senderId: userId,
+      sender: payload.user,
+      senderName: payload.userName,
       content: payload.content,
     };
 
@@ -66,7 +61,6 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     const broadcastPayload = {
       ...messageData,
       // Можно добавить дополнительные поля, например, имя отправителя
-      senderName: 'Mock User', // Получите реальное имя пользователя
       timestamp: new Date().toISOString(), // Временная метка для отображения
     };
     this.server.to(payload.roomId).emit('newMessage', broadcastPayload);
