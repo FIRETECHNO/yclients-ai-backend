@@ -13,13 +13,15 @@ export class ChatClass {
 
   @Prop({
     type: Types.ObjectId,
-    required: true
+    required: true,
+    ref: "User"
   })
   sender: Types.ObjectId
 
   @Prop({
     type: Types.ObjectId,
-    required: true
+    required: true,
+    ref: "User"
   })
   receiver: Types.ObjectId
 }
