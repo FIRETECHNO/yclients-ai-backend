@@ -31,8 +31,6 @@ export class MessageService {
     // 1. Validate and cap the limit
     const effectiveLimit = Math.max(1, Math.min(limit, MAX_MESSAGE_LIMIT_ALLOWED));
 
-    console.log(`Fetching messages for room ${roomId}. Query limit: ${effectiveLimit}.`);
-
     // 2. Perform the Query using the index efficiently
     // Since the index is { roomId: 1, createdAt: -1 } (newest first),
     // we can efficiently find the 'N' *latest* messages for the room.
@@ -53,8 +51,6 @@ export class MessageService {
     const sortedMessages = latestMessages.sort((a, b) =>
       (a.createdAt?.getTime() ?? 0) - (b.createdAt?.getTime() ?? 0)
     );
-
-    console.log(`Found and sorted ${sortedMessages.length} messages for room ${roomId} (oldest first).`);
 
     // Return the final sorted array
     // Note: If using .lean(), the type would be Message[] instead of MessageDocument[]

@@ -11,14 +11,6 @@ import { Server, Socket } from 'socket.io';
 import { ChatService } from './chat.service';
 import { Logger } from '@nestjs/common';
 
-// DTO для входящего сообщения от клиента
-class SendMessageDto {
-  roomId: string;
-  user: string;
-  userName: string;
-  content: string;
-}
-
 // Настраиваем CORS и другие параметры по необходимости
 @WebSocketGateway({ cors: { origin: '*' /* Или ваш Nuxt URL */ } })
 export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
@@ -40,18 +32,12 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   // Обработка события 'sendMessage' от клиента
   @SubscribeMessage('sendMessage')
   async handleMessage(
-    @MessageBody() payload: SendMessageDto,
+    @MessageBody() messageData: SendMessageDto,
     @ConnectedSocket() client: Socket,
   ): Promise<void> { // Часто не возвращаем явный ответ на сообщение чата
-    this.logger.debug(`Получено сообщение от ${client.id} для комнаты ${payload.roomId}`);
+    this.logger.debug(`Получено сообщение от ${client.id} для комнаты ${messageData.roomId}`);
 
     // !!! Важно: Получите ID пользователя после аутентификации !!!
-    const messageData = {
-      roomId: payload.roomId,
-      sender: payload.user,
-      senderName: payload.userName,
-      content: payload.content,
-    };
 
     // 1. Добавляем сообщение в буфер через сервис
     this.chatService.addMessageToBatch(messageData);
@@ -61,15 +47,13 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     const broadcastPayload = {
       ...messageData,
       // Можно добавить дополнительные поля, например, имя отправителя
-      timestamp: new Date().toISOString(), // Временная метка для отображения
     };
-    this.server.to(payload.roomId).emit('newMessage', broadcastPayload);
+    this.server.to(messageData.roomId).emit('newMessage', broadcastPayload);
 
     // Подтверждение отправки клиенту (опционально)
     // client.emit('messageSentAck', { tempId: payload.tempId }); // Если у сообщений есть временный ID с клиента
   }
 
-  // Пример обработчика для входа в комнату
   @SubscribeMessage('joinRoom')
   handleJoinRoom(
     @MessageBody() roomId: string,
@@ -77,7 +61,6 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   ): void {
     if (!roomId) return;
     client.join(roomId);
-    this.logger.log(`Клиент ${client.id} вошел в комнату: ${roomId}`);
     client.emit('joinedRoom', `Вы успешно вошли в комнату ${roomId}`);
   }
 }

@@ -14,6 +14,9 @@ export class Message {
   @Prop({ required: true, type: Types.ObjectId, ref: 'User' }) // Ссылка на пользователя (если есть коллекция User)
   senderId: Types.ObjectId; // ID отправителя
 
+  @Prop({ type: String })
+  senderName: string
+
   @Prop({ required: true, type: String })
   content: string; // Текст сообщения
 

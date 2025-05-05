@@ -7,17 +7,10 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { ChatClass } from './schemas/chat.schema';
 
-// DTO для создания сообщения
-interface CreateMessageDto {
-  roomId: string | Types.ObjectId;
-  sender: string | Types.ObjectId;
-  content: string;
-}
-
 @Injectable()
-export class ChatService { // Или MessageService
+export class ChatService {
   private readonly logger = new Logger(ChatService.name);
-  private messageBuffer: CreateMessageDto[] = []; // Буфер для пакетной записи
+  private messageBuffer: SendMessageDto[] = []; // Буфер для пакетной записи
   private readonly BATCH_SIZE = 50;
   private readonly FLUSH_INTERVAL = 3000;
   private intervalTimer: NodeJS.Timeout | null = null;
@@ -29,7 +22,7 @@ export class ChatService { // Или MessageService
     this.startFlushInterval(); // Запускаем интервал для пакетной записи
   }
 
-  // --- Пакетная Запись (как обсуждали ранее) ---
+  // --- Пакетная Запись ---
 
   private startFlushInterval(): void {
     this.intervalTimer = setInterval(() => {
@@ -39,7 +32,7 @@ export class ChatService { // Или MessageService
     }, this.FLUSH_INTERVAL);
   }
 
-  addMessageToBatch(dto: CreateMessageDto): void {
+  addMessageToBatch(dto: SendMessageDto): void {
     this.messageBuffer.push(dto);
     if (this.messageBuffer.length >= this.BATCH_SIZE) {
       this.flushMessageBuffer().catch(err => {
@@ -59,7 +52,6 @@ export class ChatService { // Или MessageService
       // Преобразуем DTO в объекты с ObjectId перед вставкой
       const documentsToInsert = messagesToSave.map(msg => ({
         ...msg,
-        senderId: new Types.ObjectId(msg.sender) // Убедимся, что senderId это ObjectId
       }));
       await this.messageModel.insertMany(documentsToInsert, { ordered: false });
       this.logger.log(`Успешно сохранен пакет из ${messagesToSave.length} сообщений.`);
