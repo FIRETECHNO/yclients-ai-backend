@@ -45,7 +45,7 @@ export class ChatController {
     return userFromDb?.chats;
   }
 
-  @Post('get-current-chat')
+  @Post('get-by-id')
   async getCurrentChat(
     @Body("chatId") chatId: string,
   ) {
