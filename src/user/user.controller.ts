@@ -23,7 +23,8 @@ import ApiError from 'src/exceptions/errors/api-error';
 import { Role } from '../roles/interfaces/role.interface';
 import { UserFromClient } from './interfaces/user-from-client.interface';
 import RequestWithUser from 'src/types/request-with-user.type';
-
+import type { PersonalInfo } from './interfaces/personal-info.interface';
+import type { PartnerFilters } from './interfaces/partner-filters.interface';
 
 // all about MongoDB
 import { InjectModel } from '@nestjs/mongoose';
@@ -65,6 +66,47 @@ export class UserController {
 
     await subject_user?.updateOne(user, { runValidators: true });
   }
+
+  /**
+   * 
+   * @param 
+   * @returns updatedUser: User
+   * */
+  @Post('update-about')
+  async updateAbout(
+    @Body("userId") userId: string,
+    @Body("personal") personalInfo?: PersonalInfo,
+    @Body("partnerFilters") partnerFilters?: PartnerFilters,
+  ) {
+    let userFromDb = await this.UserModel.findById(userId);
+
+    if (!userFromDb) {
+      throw ApiError.BadRequest('Пользователь с таким ID не найден');
+    }
+
+    if (personalInfo) {
+      userFromDb.gender = personalInfo.gender;
+      userFromDb.markModified("gender")
+
+      userFromDb.langLevel = personalInfo.langLevel;
+      userFromDb.markModified("langLevel")
+
+      userFromDb.age = personalInfo.age;
+      userFromDb.markModified("age")
+
+      userFromDb.idealPartnerDescription = personalInfo.idealPartnerDescription ?? "";
+      userFromDb.markModified("idealPartnerDescription")
+    }
+    if (partnerFilters) {
+      Object.assign(userFromDb.partnerFilters, partnerFilters);
+      userFromDb.markModified("partnerFilters")
+    }
+
+    await userFromDb.save();
+
+    return { updatedUser: userFromDb };
+  }
+
 
   // async addRole(user_email: string, role_type: string) {
   //   let role: Role = {

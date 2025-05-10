@@ -1,6 +1,9 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { HydratedDocument, Types } from 'mongoose';
-import type { Role } from '../../roles/interfaces/role.interface';
+
+import { PartnerFilters } from '../interfaces/partner-filters.interface';
+import { LangLevel } from '../interfaces/lang-level.interface';
+
 export type UserDocument = HydratedDocument<UserClass>;
 
 import { Match } from '../../matching/schemas/match.schema';
@@ -58,6 +61,38 @@ export class UserClass {
     default: [],
   })
   chats: Types.ObjectId[];
+
+  @Prop({
+    type: Object,
+    default: {}
+  })
+  partnerFilters: PartnerFilters
+
+  // personal info
+  @Prop({
+    type: String,
+    default: ""
+  })
+  gender: string
+
+  @Prop({
+    type: Object,
+    default: {}
+  })
+  langLevel: LangLevel
+
+  @Prop({
+    type: Number,
+    default: 0
+  })
+  age: number
+
+  @Prop({
+    type: String,
+    default: ""
+  })
+  idealPartnerDescription: string
+  // personal info
 }
 
 export const UserSchema = SchemaFactory.createForClass(UserClass);
