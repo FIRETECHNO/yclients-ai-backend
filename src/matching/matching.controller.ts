@@ -31,9 +31,11 @@ export class MatchingController {
     private ChatService: ChatService,
   ) { }
 
-  @Get('/get-matches')
-  async getAll() {
-    return await this.UserModel.find({})
+  @Post('/get-matches')
+  async getAll(
+    @Body("currentUserId") currentUserId: string,
+  ) {
+    return await this.UserModel.find({ _id: { $ne: currentUserId } })
   }
 
   @Post('like')
@@ -41,6 +43,17 @@ export class MatchingController {
     @Body('likedUserId') likedUserId: string, // user to send a request
     @Body('userId') userId: string, // current user
   ) {
+    let foundMatch = await this.MatchModel.findOne({
+      $or: [
+        { sender: userId, receiver: likedUserId },
+        { sender: likedUserId, receiver: userId }
+      ]
+    });
+
+    if (foundMatch) {
+      throw ApiError.BadRequest(`Заявка уже есть!`)
+    }
+
     let newMatch = await this.MatchModel.create({ sender: userId, receiver: likedUserId, status: "pending" });
 
     let result = await this.UserModel.findByIdAndUpdate(userId, { $push: { matches: newMatch._id } });
