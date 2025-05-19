@@ -77,7 +77,7 @@ export class MatchingController {
   async populateMatches(
     @Query("user_id") userId: string
   ) {
-    const fieldsToPopulate = "name surname email";
+    const fieldsToPopulate = "name surname email gender langLevel age idealPartnerDescription";
 
     return await this.UserModel.findById(userId).populate({
       path: "matches",
