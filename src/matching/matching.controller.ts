@@ -16,6 +16,8 @@ import { ChatService } from 'src/chat/chat.service';
 
 import ApiError from 'src/exceptions/errors/api-error'
 
+import type { PartnerFilters } from 'src/user/interfaces/partner-filters.interface';
+
 // all aboout MongoDB
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
@@ -34,8 +36,37 @@ export class MatchingController {
   @Post('/get-matches')
   async getAll(
     @Body("currentUserId") currentUserId: string,
+    @Body("partnerFilters") partnerFilters: PartnerFilters
   ) {
-    return await this.UserModel.find({ _id: { $ne: currentUserId } })
+    let filters = {
+      _id: { $ne: currentUserId },
+      gender: { $exists: true },
+      langLevel: { $exists: true },
+      age: { $exists: true },
+      idealPartnerDescription: { $exists: true },
+    };
+
+    if (partnerFilters?.minAge && partnerFilters?.maxAge) {
+      filters.age['$gte'] = partnerFilters.minAge;
+      filters.age['$lte'] = partnerFilters.maxAge;
+    }
+
+    if (partnerFilters?.gender && partnerFilters?.gender != 'any') {
+      filters.gender['$eq'] = partnerFilters?.gender;
+    }
+
+    if (partnerFilters?.langLevel?.length > 0) {
+      let selectedLevels: string[] = [];
+      for (let ll of partnerFilters.langLevel) {
+        selectedLevels.push(ll.filterKey);
+      }
+
+      filters['langLevel.filterKey'] = {
+        "$in": selectedLevels
+      }
+    }
+
+    return await this.UserModel.find(filters)
   }
 
   @Post('like')
