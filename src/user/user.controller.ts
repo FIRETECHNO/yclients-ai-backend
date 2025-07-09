@@ -24,7 +24,6 @@ import { Role } from '../roles/interfaces/role.interface';
 import { UserFromClient } from './interfaces/user-from-client.interface';
 import RequestWithUser from 'src/types/request-with-user.type';
 import type { PersonalInfo } from './interfaces/personal-info.interface';
-import type { PartnerFilters } from './interfaces/partner-filters.interface';
 
 // all about MongoDB
 import { InjectModel } from '@nestjs/mongoose';
@@ -76,7 +75,6 @@ export class UserController {
   async updateAbout(
     @Body("userId") userId: string,
     @Body("personal") personalInfo?: PersonalInfo,
-    @Body("partnerFilters") partnerFilters?: PartnerFilters,
   ) {
     let userFromDb = await this.UserModel.findById(userId);
 
@@ -88,19 +86,10 @@ export class UserController {
       userFromDb.gender = personalInfo.gender;
       userFromDb.markModified("gender")
 
-      userFromDb.langLevel = personalInfo.langLevel;
-      userFromDb.markModified("langLevel")
-
       userFromDb.age = personalInfo.age;
       userFromDb.markModified("age")
+    }
 
-      userFromDb.idealPartnerDescription = personalInfo.idealPartnerDescription ?? "";
-      userFromDb.markModified("idealPartnerDescription")
-    }
-    if (partnerFilters) {
-      Object.assign(userFromDb.partnerFilters, partnerFilters);
-      userFromDb.markModified("partnerFilters")
-    }
 
     await userFromDb.save();
 
