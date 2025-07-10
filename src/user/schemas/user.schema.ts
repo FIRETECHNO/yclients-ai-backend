@@ -23,6 +23,13 @@ export class UserClass {
     type: String,
     required: true,
   })
+  phone: string;
+
+
+  @Prop({
+    type: String,
+    required: true,
+  })
   email: string;
 
   @Prop({
