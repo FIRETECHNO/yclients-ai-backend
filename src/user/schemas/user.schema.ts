@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { HydratedDocument, Types } from 'mongoose';
+import type { TeacherSummary } from 'src/teacher/interfaces/teacher-summary.interface';
 
 export type UserDocument = HydratedDocument<UserClass>;
 
@@ -17,14 +18,13 @@ export class UserClass {
     required: true,
     min: 2,
   })
-  surname: string
+  surname: string;
 
   @Prop({
     type: String,
     required: true,
   })
   phone: string;
-
 
   @Prop({
     type: String,
@@ -48,9 +48,32 @@ export class UserClass {
   @Prop({
     type: Array,
     default: [],
-    required: false
+    required: false,
   })
   avatars: string[];
+
+  //Teacher info
+  @Prop({
+    type: String,
+    required: false,
+  })
+  educationLevel: string;
+
+  @Prop({
+    type: String,
+    required: false,
+  })
+  experience: string;
+  @Prop({
+    type: String,
+    required: false,
+  })
+  achievements: string;
+  @Prop({
+    type: String,
+    required: false,
+  })
+  aboutMe: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(UserClass);
