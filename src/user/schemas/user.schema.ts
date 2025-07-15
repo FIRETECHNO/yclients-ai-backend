@@ -55,22 +55,26 @@ export class UserClass {
   //Teacher info
   @Prop({
     type: String,
+    default: '',
     required: false,
   })
   educationLevel: string;
 
   @Prop({
     type: String,
+    default: '',
     required: false,
   })
   experience: string;
   @Prop({
     type: String,
+    default: '',
     required: false,
   })
   achievements: string;
   @Prop({
     type: String,
+    default: '',
     required: false,
   })
   aboutMe: string;

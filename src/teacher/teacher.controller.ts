@@ -28,17 +28,18 @@ export class TeacherController {
   ) {
     console.log(teacherId, summary);
     let candidate = await this.UserModel.findById(teacherId);
-    this.UserModel.updateOne(
+    let res = await this.UserModel.updateOne(
       { _id: teacherId },
       {
         $set: {
-          educationLevel: summary.educationLevel,
-          experience: summary.experience,
-          achievements: summary.achievements,
           aboutMe: summary.aboutMe,
+          experience: summary.experience,
+          educationLevel: summary.educationLevel,
+          achievements: summary.achievements,
         },
       },
     );
+    console.log(res);
     // найти по teacherId и обновить все поля, которые пришли из summary
   }
 }
