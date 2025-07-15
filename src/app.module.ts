@@ -14,6 +14,7 @@ import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { S3Module } from './s3/s3.module';
 import { MailModule } from './mail/mail.module';
+import { TeacherModule } from './teacher/teacher.module';
 
 
 @Module({
@@ -36,6 +37,7 @@ import { MailModule } from './mail/mail.module';
     AuthModule,
     S3Module,
     MailModule,
+    TeacherModule,
   ],
   controllers: [AppController],
   providers: [AppService,
