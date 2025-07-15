@@ -23,7 +23,6 @@ import ApiError from 'src/exceptions/errors/api-error';
 import { Role } from '../roles/interfaces/role.interface';
 import { UserFromClient } from './interfaces/user-from-client.interface';
 import RequestWithUser from 'src/types/request-with-user.type';
-import type { PersonalInfo } from './interfaces/personal-info.interface';
 
 // all about MongoDB
 import { InjectModel } from '@nestjs/mongoose';
@@ -74,22 +73,12 @@ export class UserController {
   @Post('update-about')
   async updateAbout(
     @Body("userId") userId: string,
-    @Body("personal") personalInfo?: PersonalInfo,
   ) {
     let userFromDb = await this.UserModel.findById(userId);
 
     if (!userFromDb) {
       throw ApiError.BadRequest('Пользователь с таким ID не найден');
     }
-
-    if (personalInfo) {
-      userFromDb.gender = personalInfo.gender;
-      userFromDb.markModified("gender")
-
-      userFromDb.age = personalInfo.age;
-      userFromDb.markModified("age")
-    }
-
 
     await userFromDb.save();
 

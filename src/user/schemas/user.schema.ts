@@ -51,20 +51,6 @@ export class UserClass {
     required: false
   })
   avatars: string[];
-
-  // personal info
-  @Prop({
-    type: String,
-    default: ""
-  })
-  gender: string
-
-
-  @Prop({
-    type: Number,
-    default: 0
-  })
-  age: number
 }
 
 export const UserSchema = SchemaFactory.createForClass(UserClass);

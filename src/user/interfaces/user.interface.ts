@@ -8,8 +8,4 @@ export interface User {
   email: string
   password: string
   roles: Role[]
-
-
-  gender: string,
-  age: number,
 }
