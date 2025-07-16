@@ -38,6 +38,6 @@ export class TeacherController {
         },
       },
     );
-    return true;
+    return { success: true };
   }
 }
