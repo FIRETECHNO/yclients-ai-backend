@@ -26,7 +26,6 @@ export class TeacherController {
     @Body('teacherId') teacherId: string,
     @Body('summary') summary: TeacherSummary,
   ) {
-    console.log(teacherId, summary);
     let candidate = await this.UserModel.findById(teacherId);
     let res = await this.UserModel.updateOne(
       { _id: teacherId },
@@ -39,7 +38,6 @@ export class TeacherController {
         },
       },
     );
-    console.log(res);
-    // найти по teacherId и обновить все поля, которые пришли из summary
+    return true;
   }
 }
