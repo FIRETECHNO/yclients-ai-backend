@@ -14,4 +14,5 @@ export interface User {
   experience?: string;
   achievements?: string;
   aboutMe?: string;
+  rights: string[];
 }

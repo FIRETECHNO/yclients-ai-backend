@@ -19,7 +19,7 @@ export class TeacherController {
   constructor(
     @InjectModel('User') private UserModel: Model<UserClass>,
     private readonly teacherService: TeacherService,
-  ) {}
+  ) { }
 
   @Post('update-teacher-summary')
   async updateTeacherSummary(
@@ -39,5 +39,30 @@ export class TeacherController {
       },
     );
     return { success: true };
+  }
+
+  @Get("get-all-teachers")
+  async getAllTeachers() {
+    return await this.UserModel.find({ roles: "teacher" })
+  }
+
+  @Post('get-teachers')
+  async getTeachers(
+    @Body("email") email: string
+  ) {
+    let emailRegex = new RegExp(email, "i")
+    return await this.UserModel.find({ roles: "teacher", email: { $regex: emailRegex } })
+  }
+
+  @Post("update-teacher-rights")
+  async updateTeacherRights(
+    @Body("teacherId") teacherId: string,
+    @Body("newRights") newRights: string[]
+  ) {
+    let result = await this.UserModel.findByIdAndUpdate(teacherId, { $set: { rights: newRights } })
+    if (!result) {
+      return { success: false }
+    }
+    return { success: true }
   }
 }

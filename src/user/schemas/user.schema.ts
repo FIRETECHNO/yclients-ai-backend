@@ -78,6 +78,11 @@ export class UserClass {
     required: false,
   })
   aboutMe: string;
+  @Prop({
+    type: Array,
+    required: false,
+  })
+  rights: string[];
 }
 
 export const UserSchema = SchemaFactory.createForClass(UserClass);
