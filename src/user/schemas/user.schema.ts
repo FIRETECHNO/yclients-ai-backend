@@ -83,6 +83,22 @@ export class UserClass {
     required: false,
   })
   rights: string[];
+
+  // Student info
+  @Prop({
+    type: Types.ObjectId,
+    ref: "User",
+    required: false
+  })
+  parentId: Types.ObjectId
+
+  // Parent info
+  @Prop({
+    type: [{ type: Types.ObjectId, ref: 'User' }],
+    default: [],
+    required: false
+  })
+  myChildren: Types.ObjectId[];
 }
 
 export const UserSchema = SchemaFactory.createForClass(UserClass);

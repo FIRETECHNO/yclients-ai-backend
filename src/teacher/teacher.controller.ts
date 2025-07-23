@@ -54,6 +54,14 @@ export class TeacherController {
     return await this.UserModel.find({ roles: "teacher", email: { $regex: emailRegex } })
   }
 
+  @Post('get-students')
+  async getStudents(
+    @Body("email") email: string
+  ) {
+    let emailRegex = new RegExp(email, "i")
+    return await this.UserModel.find({ roles: "student", email: { $regex: emailRegex } })
+  }
+
   @Post("update-teacher-rights")
   async updateTeacherRights(
     @Body("teacherId") teacherId: string,

@@ -9,10 +9,16 @@ export interface User {
   password: string;
   roles: Role[];
 
-  //Teacher info
+  // Teacher info
   educationLevel?: string;
   experience?: string;
   achievements?: string;
   aboutMe?: string;
   rights: string[];
+
+  // Student info
+  parentId?: string
+
+  // Parent info
+  myChildren?: string[]
 }

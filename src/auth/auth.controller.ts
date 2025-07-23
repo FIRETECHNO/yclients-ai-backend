@@ -19,6 +19,7 @@ import * as sharp from "sharp";
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { UserClass } from 'src/user/schemas/user.schema';
+import ApiError from 'src/exceptions/errors/api-error';
 
 @Controller('auth')
 export class AuthController {
@@ -39,43 +40,64 @@ export class AuthController {
 	@Post('registration')
 	async registration(
 		@Res({ passthrough: true }) res: Response,
-		@Body() user: User
+		@Body("user") user: User,
+		@Body("parentId") parentId: string
 	) {
-		const userData = await this.AuthService.registration(user)
-		// await this.mailService.sendUserConfirmation(user);
+		// обычная регистрация
+		if (parentId == null) {
+			const userData = await this.AuthService.registration(user)
+			// await this.mailService.sendUserConfirmation(user);
 
-		let refreshToken = userData.refreshToken
-		_.omit(userData, "refreshToken");
+			let refreshToken = userData.refreshToken
+			_.omit(userData, "refreshToken");
 
-		res.cookie(
-			'refreshToken',
-			refreshToken,
-			{
-				maxAge: 30 * 24 * 60 * 60 * 1000,
-				httpOnly: !eval(process.env.HTTPS),
-				secure: eval(process.env.HTTPS),
-				domain: process.env?.DOMAIN ?? ''
+			res.cookie(
+				'refreshToken',
+				refreshToken,
+				{
+					maxAge: 30 * 24 * 60 * 60 * 1000,
+					httpOnly: !eval(process.env.HTTPS),
+					secure: eval(process.env.HTTPS),
+					domain: process.env?.DOMAIN ?? ''
+				}
+			).cookie(
+				'token',
+				userData.accessToken,
+				{
+					maxAge: 7 * 24 * 60 * 60 * 1000,
+					httpOnly: !eval(process.env.HTTPS),
+					secure: eval(process.env.HTTPS),
+					domain: process.env?.DOMAIN ?? ''
+				}
+			).cookie(
+				'roles',
+				JSON.stringify(userData.user.roles),
+				{
+					maxAge: 7 * 24 * 60 * 60 * 1000,
+					httpOnly: !eval(process.env.HTTPS),
+					secure: eval(process.env.HTTPS),
+					domain: process.env?.DOMAIN ?? ''
+				}
+			)
+				.json(userData)
+		} else {
+			let parentFromDb = await this.UserModel.findById(parentId);
+			if (!parentFromDb) {
+				throw ApiError.BadRequest(`Не существует Родителя с _id ${parentId}`);
 			}
-		).cookie(
-			'token',
-			userData.accessToken,
-			{
-				maxAge: 7 * 24 * 60 * 60 * 1000,
-				httpOnly: !eval(process.env.HTTPS),
-				secure: eval(process.env.HTTPS),
-				domain: process.env?.DOMAIN ?? ''
+			const userData = await this.AuthService.registration({ ...user, parentId })
+			let childrenId = userData.user._id;
+
+			if (parentFromDb.myChildren?.length) {
+				parentFromDb.myChildren.push(childrenId)
+			} else {
+				parentFromDb.myChildren = [childrenId]
 			}
-		).cookie(
-			'roles',
-			JSON.stringify(userData.user.roles),
-			{
-				maxAge: 7 * 24 * 60 * 60 * 1000,
-				httpOnly: !eval(process.env.HTTPS),
-				secure: eval(process.env.HTTPS),
-				domain: process.env?.DOMAIN ?? ''
-			}
-		)
-			.json(userData)
+			parentFromDb.markModified("myChildren")
+			await parentFromDb.save();
+
+			res.json(userData)
+		}
 	}
 
 	@Throttle({
