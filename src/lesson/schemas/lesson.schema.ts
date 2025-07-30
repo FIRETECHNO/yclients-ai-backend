@@ -24,10 +24,31 @@ export class LessonClass {
     type: Date,
     required: true,
   })
-  date: Date;
+  dateTime: Date;
 
+  @Prop({
+    type: Boolean,
+    required: true,
+  })
+  isFirstLesson: boolean;
 
+  @Prop({
+    type: Array,
+    required: true,
+  })
+  subjects: string[]
 
+  @Prop({
+    type: Array,
+    required: true,
+  })
+  grades: number[]
+
+  @Prop({
+    type: Array,
+    required: true,
+  })
+  goals: string[]
 }
 
 export const LessonSchema = SchemaFactory.createForClass(LessonClass);

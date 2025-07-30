@@ -1,6 +1,9 @@
 export interface Lesson {
   student: string;
   teacher: string;
-
-  date: string;
+  isFirstLesson: boolean;
+  dateTime: string;
+  subjects: string[];
+  grades: number[];
+  goals: string[];
 }

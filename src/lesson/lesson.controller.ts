@@ -14,10 +14,14 @@ export class LessonController {
   ) { }
 
 
-  @Post('/create')
-  async create(
+  @Post('assign')
+  async assign(
     @Body("lesson") lesson: Lesson
   ) {
-    return await this.LessonModel.create(lesson)
+    let res = await this.LessonModel.create(lesson)
+    if (res._id) {
+      return { success: true }
+    }
+    return { success: false }
   }
 }
