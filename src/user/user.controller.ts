@@ -28,28 +28,18 @@ import RequestWithUser from 'src/types/request-with-user.type';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { UserClass } from './schemas/user.schema';
+import { LessonClass } from 'src/lesson/schemas/lesson.schema';
 
 
 @Controller('user')
 export class UserController {
   constructor(
     @InjectModel('User') private UserModel: Model<UserClass>,
+    @InjectModel('Lesson') private LessonModel: Model<LessonClass>,
 
     private UserService: UserService,
     private RolesService: RolesService,
   ) { }
-
-  @HttpCode(HttpStatus.OK)
-  @Get('get-by-id')
-  async get_by_id(@Query('_id') _id: string) {
-    let candidate = await this.UserModel.findById(_id, {
-      password: 0,
-    }).populate('orders').populate('managerIn');
-    if (!candidate)
-      throw ApiError.BadRequest('Пользователь с таким ID не найден');
-
-    return candidate;
-  }
 
   @HttpCode(HttpStatus.OK)
   @UseGuards(SomeAdminGuard)
@@ -83,6 +73,37 @@ export class UserController {
     await userFromDb.save();
 
     return { updatedUser: userFromDb };
+  }
+
+  @Post("get-lessons")
+  async getLessons(
+    @Body("userId") userId: string,
+    @Query("role") role: string
+  ) {
+    if (role == "student") {
+      return await this.LessonModel.find({
+        student: userId
+      })
+    }
+
+    if (role == "teacher") {
+      return await this.LessonModel.find({
+        teacher: userId
+      })
+    }
+
+    return []
+  }
+
+  @Get("get-by-id")
+  async getById(
+    @Query("_id") userId: string
+  ) {
+    let candidate = await this.UserModel.findById(userId)
+    if (!candidate)
+      throw ApiError.BadRequest('Пользователь с таким ID не найден');
+
+    return candidate;
   }
 
 

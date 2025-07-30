@@ -1,6 +1,5 @@
 import mongoose from 'mongoose';
 import type { Role } from '../../roles/interfaces/role.interface';
-import type { Lesson } from 'src/lesson/types/lesson.interface';
 
 export interface User {
   _id: mongoose.Types.ObjectId;
@@ -24,5 +23,5 @@ export interface User {
   // Parent info
   myChildren?: string[]
 
-  lessons: Lesson[] | string[]
+  lessons: string[]
 }
