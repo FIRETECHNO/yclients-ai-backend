@@ -7,4 +7,5 @@ export interface Lesson {
   grades: number[];
   goals: string[];
   miroBoardUrl: string | null;
+  isStarted: boolean;
 }

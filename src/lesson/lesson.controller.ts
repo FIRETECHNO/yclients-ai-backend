@@ -66,4 +66,18 @@ export class LessonController {
   ) {
     return await this.LessonModel.findById(lessonId);
   }
+
+  @Get("start-lesson")
+  async startLesson(
+    @Query("lesson_id") lessonId: string,
+    @Query("teacher_id") teacherId: string,
+  ) {
+    let lessonFromDb = await this.LessonModel.findById(lessonId);
+    if (!lessonFromDb) throw ApiError.BadRequest("Нет такого урока!");
+
+    if (lessonFromDb.teacher.toString() != teacherId) throw ApiError.AccessDenied("У вас не права начать этот урок!")
+
+    lessonFromDb.isStarted = true;
+    return await lessonFromDb.save()
+  }
 }

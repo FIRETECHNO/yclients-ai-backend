@@ -52,6 +52,9 @@ export class LessonClass {
 
   @Prop({ type: String, default: null })
   miroBoardUrl: string | null;
+
+  @Prop({ type: Boolean, default: false })
+  isStarted: boolean;
 }
 
 export const LessonSchema = SchemaFactory.createForClass(LessonClass);
