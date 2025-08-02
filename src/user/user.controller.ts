@@ -80,19 +80,23 @@ export class UserController {
     @Body("userId") userId: string,
     @Query("role") role: string
   ) {
+    const now = new Date();
+
     if (role == "student") {
       return await this.LessonModel.find({
-        student: userId
-      })
+        student: userId,
+        dateTime: { $gte: now }
+      }).sort({ dateTime: 'asc' });
     }
 
     if (role == "teacher") {
       return await this.LessonModel.find({
-        teacher: userId
-      })
+        teacher: userId,
+        dateTime: { $gte: now }
+      }).sort({ dateTime: 'asc' });
     }
 
-    return []
+    return [];
   }
 
   @Get("get-by-id")
