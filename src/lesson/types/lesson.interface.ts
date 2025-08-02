@@ -6,4 +6,5 @@ export interface Lesson {
   subjects: string[];
   grades: number[];
   goals: string[];
+  miroBoardUrl: string | null;
 }

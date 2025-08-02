@@ -1,4 +1,4 @@
-import { Controller, Post, Body } from '@nestjs/common';
+import { Controller, Post, Body, Get, Query } from '@nestjs/common';
 import { LessonService } from './lesson.service';
 import { InjectModel } from '@nestjs/mongoose';
 import { LessonClass } from './schemas/lesson.schema';
@@ -42,5 +42,28 @@ export class LessonController {
       return { success: true }
     }
     return { success: false }
+  }
+
+  @Post("attach-miro-board")
+  async attachMiroBoard(
+    @Body("lessonId") lessonId: string,
+    @Body("miroBoardUrl") miroBoardUrl: string,
+  ) {
+    const updatedLesson = await this.LessonModel.findByIdAndUpdate(
+      lessonId,
+      { $set: { miroBoardUrl: miroBoardUrl } },
+      { new: true }
+    );
+    if (!updatedLesson) {
+      throw ApiError.NotFound(`Lesson with ID ${lessonId} not found`);
+    }
+    return updatedLesson;
+  }
+
+  @Get("get-by-id")
+  async getById(
+    @Query("_id") lessonId: string
+  ) {
+    return await this.LessonModel.findById(lessonId);
   }
 }

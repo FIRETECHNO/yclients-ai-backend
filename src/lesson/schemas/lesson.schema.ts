@@ -49,6 +49,9 @@ export class LessonClass {
     required: true,
   })
   goals: string[]
+
+  @Prop({ type: String, default: null })
+  miroBoardUrl: string | null;
 }
 
 export const LessonSchema = SchemaFactory.createForClass(LessonClass);
