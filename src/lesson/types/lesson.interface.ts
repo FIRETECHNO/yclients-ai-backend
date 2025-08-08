@@ -8,4 +8,5 @@ export interface Lesson {
   goals: string[];
   miroBoardUrl: string | null;
   isStarted: boolean;
+  isFinished: boolean;
 }

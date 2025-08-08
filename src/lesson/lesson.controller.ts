@@ -80,4 +80,21 @@ export class LessonController {
     lessonFromDb.isStarted = true;
     return await lessonFromDb.save()
   }
+
+  @Get("finish")
+  async finishLesson(
+    @Query("lesson_id") lessonId: string,
+  ) {
+    let lessonFromDb = await this.LessonModel.findById(lessonId);
+    if (!lessonFromDb) throw ApiError.BadRequest("Нет такого урока!");
+
+    lessonFromDb.isFinished = true;
+
+    try {
+      await lessonFromDb.save()
+      return { success: true }
+    } catch (error) {
+      return { success: false }
+    }
+  }
 }

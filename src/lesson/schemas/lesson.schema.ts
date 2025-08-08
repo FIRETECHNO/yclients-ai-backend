@@ -55,6 +55,9 @@ export class LessonClass {
 
   @Prop({ type: Boolean, default: false })
   isStarted: boolean;
+
+  @Prop({ type: Boolean, default: false })
+  isFinished: boolean;
 }
 
 export const LessonSchema = SchemaFactory.createForClass(LessonClass);
