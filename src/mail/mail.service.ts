@@ -6,7 +6,7 @@ import type { User } from 'src/user/interfaces/user.interface';
 
 @Injectable()
 export class MailService {
-  constructor(private mailerService: MailerService) {}
+  constructor(private mailerService: MailerService) { }
 
   public async sendUserConfirmation(user: User) {
     // const url = `example.com/auth/confirm?token=${token}`;
@@ -24,7 +24,7 @@ export class MailService {
   }
   public async sendTeacherRegistrationNotify(user: User) {
     await this.mailerService.sendMail({
-      to: 'sura14081976@gmail.com',
+      to: 'grishadzyin@gmail.com',
       subject: 'Регистрация нового учителя',
       template: 'teacher-registration-notify',
       context: {
