@@ -28,14 +28,12 @@ import RequestWithUser from 'src/types/request-with-user.type';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { UserClass } from './schemas/user.schema';
-import { LessonClass } from 'src/lesson/schemas/lesson.schema';
 
 
 @Controller('user')
 export class UserController {
   constructor(
     @InjectModel('User') private UserModel: Model<UserClass>,
-    @InjectModel('Lesson') private LessonModel: Model<LessonClass>,
 
     private UserService: UserService,
     private RolesService: RolesService,
@@ -75,30 +73,6 @@ export class UserController {
     return { updatedUser: userFromDb };
   }
 
-  @Post("get-lessons")
-  async getLessons(
-    @Body("userId") userId: string,
-    @Query("role") role: string
-  ) {
-    const now = new Date();
-
-    if (role == "student") {
-      return await this.LessonModel.find({
-        student: userId,
-        dateTime: { $gte: now }
-      }).sort({ dateTime: 'asc' });
-    }
-
-    if (role == "teacher") {
-      return await this.LessonModel.find({
-        teacher: userId,
-        dateTime: { $gte: now }
-      }).sort({ dateTime: 'asc' });
-    }
-
-    return [];
-  }
-
   @Get("get-by-id")
   async getById(
     @Query("_id") userId: string
@@ -109,25 +83,4 @@ export class UserController {
 
     return candidate;
   }
-
-
-  // async addRole(user_email: string, role_type: string) {
-  //   let role: Role = {
-  //     type: role_type,
-  //     rest_ids: [],
-  //   };
-  //   return await this.UserModel.updateOne(
-  //     { email: user_email, 'role.type': { $nin: [role_type] } },
-  //     { $addToSet: { roles: role } },
-  //     { runValidators: true },
-  //   );
-  // }
-
-  // async deleteRole(user_email: string, role_type: string) {
-  //   return await this.UserModel.updateOne(
-  //     { email: user_email },
-  //     { $unset: { 'roles.$[t]': '' } },
-  //     { arrayFilters: [{ 't.type': role_type }], runValidators: true },
-  //   );
-  // }
 }

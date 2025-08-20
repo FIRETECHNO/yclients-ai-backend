@@ -14,8 +14,6 @@ import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { S3Module } from './s3/s3.module';
 import { MailModule } from './mail/mail.module';
-import { TeacherModule } from './teacher/teacher.module';
-import { LessonModule } from './lesson/lesson.module';
 
 
 @Module({
@@ -38,8 +36,6 @@ import { LessonModule } from './lesson/lesson.module';
     AuthModule,
     S3Module,
     MailModule,
-    TeacherModule,
-    LessonModule,
   ],
   controllers: [AppController],
   providers: [AppService,
