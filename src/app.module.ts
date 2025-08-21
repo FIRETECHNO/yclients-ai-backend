@@ -15,6 +15,7 @@ import { AuthModule } from './auth/auth.module';
 import { S3Module } from './s3/s3.module';
 import { MailModule } from './mail/mail.module';
 import { CompanyModule } from './company/company.module';
+import { MessageModule } from './message/message.module';
 
 
 @Module({
@@ -38,6 +39,7 @@ import { CompanyModule } from './company/company.module';
     S3Module,
     MailModule,
     CompanyModule,
+    MessageModule,
   ],
   controllers: [AppController],
   providers: [AppService,
