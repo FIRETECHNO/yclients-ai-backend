@@ -9,26 +9,21 @@ export class MessageClass {
     type: String,
     required: true,
   })
-  _id?: string;
-
-  @Prop({
-    type: String,
-    required: true,
-  })
   stringContent: string;
 
   @Prop({
-    type: Map,
-    required: true,
+    type: Object,
+    required: false,
     default: {},
   })
-  payload: Record<string, any>;
+  payload: any;
 
   @Prop({
     type: Number,
     required: true,
   })
-  author?: number | -1;
+  author: number;
+
   @Prop({
     type: Boolean,
     required: true,
