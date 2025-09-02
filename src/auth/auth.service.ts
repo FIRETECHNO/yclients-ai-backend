@@ -19,7 +19,7 @@ export class AuthService {
     private mailService: MailService,
   ) { }
 
-  async registration(user: User | UserFromClient) {
+  /*async registration(user: User | UserFromClient) {
     const candidate = await this.UserModel.findOne({ email: user.email })
 
     if (candidate)
@@ -38,9 +38,9 @@ export class AuthService {
       ...tokens,
       user: created_user
     }
-  }
+  }*/
 
-  async login(email: string, password: string) {
+  /*async login(email: string, password: string) {
     const user = await this.UserModel.findOne({ email })
 
     if (!user) {
@@ -63,9 +63,9 @@ export class AuthService {
       ...tokens,
       user
     }
-  }
+  }*/
 
-  async refresh(refreshToken: string, accessToken: string) {
+  /*async refresh(refreshToken: string, accessToken: string) {
     let userData: any; // jwt payload
     let user: any; // object to return
 
@@ -109,9 +109,9 @@ export class AuthService {
       accessToken: newAccessToken,
       user: user
     }
-  }
+  }*/
 
-  async validateEnterToResetPassword(user_id: any, token: string) {
+  /*async validateEnterToResetPassword(user_id: any, token: string) {
     let candidate = await this.UserModel.findById(user_id)
 
     if (!candidate?._id) throw ApiError.BadRequest('Пользователь с таким _id не найден')
@@ -123,9 +123,9 @@ export class AuthService {
     if (!result) throw ApiError.AccessDenied()
 
     return result
-  }
+  }*/
 
-  async resetPassword(password: string, token: string, userId: string): Promise<any> {
+  /*async resetPassword(password: string, token: string, userId: string): Promise<any> {
     try {
       await this.validateEnterToResetPassword(userId, token)
 
@@ -144,9 +144,9 @@ export class AuthService {
     } catch (error) {
       return null
     }
-  }
+  }*/
 
-  async sendResetLink(email: string) {
+  /*async sendResetLink(email: string) {
     let candidate = await this.UserModel.findOne({ email })
     if (!candidate)
       throw ApiError.BadRequest('Пользователь с таким email не найден')
@@ -159,20 +159,20 @@ export class AuthService {
     await this.mailService.sendResetLink(link, email)
 
     return link
-  }
+  }*/
 
-  async logout(refreshToken: string) {
+  /*async logout(refreshToken: string) {
     return await this.TokenService.removeToken(refreshToken)
-  }
+  }*/
 
-  async update(newUser: UserFromClient, userId: string) {
+  /*async update(newUser: UserFromClient, userId: string) {
     return await this.UserModel.findByIdAndUpdate(userId, newUser, {
       new: true,
       runValidators: true
     })
-  }
+  }*/
 
-  async getAllUsers() {
+  /*async getAllUsers() {
     return await this.UserModel.find({})
-  }
+  }*/
 }

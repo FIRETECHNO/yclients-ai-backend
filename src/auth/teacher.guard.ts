@@ -10,13 +10,15 @@ import { UserClass } from 'src/user/schemas/user.schema';
 import ApiError from 'src/exceptions/errors/api-error';
 
 @Injectable()
-export class TeacherAuthGuard implements CanActivate {
+export class TeacherAuthGuard
+// implements CanActivate
+{
   constructor(
     private readonly tokenService: TokenService,
     @InjectModel('User') private UserModel: Model<UserClass>,
   ) { }
 
-  async canActivate(
+  /*async canActivate(
     context: ExecutionContext,
   ): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
@@ -34,5 +36,5 @@ export class TeacherAuthGuard implements CanActivate {
       if (user?.roles.indexOf('teacher') != -1) return true
     }
     throw ApiError.AccessDenied()
-  }
+  }*/
 }

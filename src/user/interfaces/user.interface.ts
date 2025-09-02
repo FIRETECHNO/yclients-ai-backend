@@ -1,12 +1,6 @@
-import mongoose from 'mongoose';
-import type { Role } from '../../roles/interfaces/role.interface';
-
 export interface User {
-  _id: mongoose.Types.ObjectId;
-  name: string;
-  surname: string;
-  phone: string;
-  email: string;
-  password: string;
-  roles: Role[];
+  id: number
+  name: string
+  login: string
+  user_token: string
 }

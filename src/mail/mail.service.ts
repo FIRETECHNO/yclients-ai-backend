@@ -8,7 +8,7 @@ import type { User } from 'src/user/interfaces/user.interface';
 export class MailService {
   constructor(private mailerService: MailerService) { }
 
-  public async sendUserConfirmation(user: User) {
+  /*public async sendUserConfirmation(user: User) {
     // const url = `example.com/auth/confirm?token=${token}`;
     await this.mailerService.sendMail({
       to: user.email, //process.env.MAIL_USER,
@@ -21,7 +21,8 @@ export class MailService {
         // url,
       },
     });
-  }
+  }*/
+
   public async sendTeacherRegistrationNotify(user: User) {
     await this.mailerService.sendMail({
       to: 'grishadzyin@gmail.com',

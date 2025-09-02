@@ -9,13 +9,15 @@ import { Model } from 'mongoose'
 import { UserClass } from 'src/user/schemas/user.schema';
 
 @Injectable()
-export class AdminAuthGuard implements CanActivate {
+export class AdminAuthGuard
+// implements CanActivate
+{
   constructor(
     private readonly tokenService: TokenService,
     @InjectModel('User') private UserModel: Model<UserClass>,
   ) { }
 
-  async canActivate(
+  /*async canActivate(
     context: ExecutionContext,
   ): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
@@ -33,5 +35,5 @@ export class AdminAuthGuard implements CanActivate {
       if (user?.roles.indexOf('admin') != -1) return true
     }
     throw ApiError.AccessDenied()
-  }
+  }*/
 }

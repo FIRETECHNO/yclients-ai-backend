@@ -9,13 +9,15 @@ import { Model } from 'mongoose'
 import { UserClass } from 'src/user/schemas/user.schema';
 
 @Injectable()
-export class AuthGuard implements CanActivate {
+export class AuthGuard
+// implements CanActivate
+{
   constructor(
     private readonly tokenService: TokenService,
     @InjectModel('User') private UserModel: Model<UserClass>,
   ) { }
 
-  async canActivate(context: ExecutionContext): Promise<boolean> {
+  /*async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest()
     const cookies = cookie.parse(request.headers.cookie || '');
     const accessToken = cookies.token;
@@ -27,5 +29,5 @@ export class AuthGuard implements CanActivate {
       return true
     }
     throw ApiError.UnauthorizedError();
-  }
+  }*/
 }

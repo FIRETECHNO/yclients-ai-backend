@@ -42,7 +42,7 @@ export class AuthController {
   ) { }
 
 
-  @Throttle({
+  /*@Throttle({
     default: {
       ttl: 60000,
       limit: 4,
@@ -90,9 +90,9 @@ export class AuthController {
       }
     )
       .json(userData)
-  }
+  }*/
 
-  @Throttle({
+  /*@Throttle({
     default: {
       ttl: 60000,
       limit: 5,
@@ -131,9 +131,9 @@ export class AuthController {
         domain: process.env?.DOMAIN ?? '',
       })
       .json(userData);
-  }
+  }*/
 
-  @HttpCode(HttpStatus.OK)
+  /*@HttpCode(HttpStatus.OK)
   @Get('refresh')
   async refresh(@Req() req: Request, @Res() res: Response) {
     const { refreshToken, token } = req.cookies;
@@ -156,18 +156,18 @@ export class AuthController {
       domain: process.env?.DOMAIN ?? '',
     });
     res.json(userData.user);
-  }
+  }*/
 
-  @HttpCode(HttpStatus.OK)
+  /*@HttpCode(HttpStatus.OK)
   @Post('logout')
   async logout(@Req() req: Request, @Res() res: Response) {
     const { refreshToken } = req.cookies;
 
     await this.AuthService.logout(refreshToken);
     res.clearCookie('refreshToken').clearCookie('token').send();
-  }
+  }*/
 
-  @Throttle({
+  /*@Throttle({
     default: {
       ttl: 60000,
       limit: 4,
@@ -204,9 +204,9 @@ export class AuthController {
         domain: process.env?.DOMAIN ?? '',
       })
       .json(userData);
-  }
+  }*/
 
-  @UseGuards(AuthGuard)
+  /*@UseGuards(AuthGuard)
   @HttpCode(HttpStatus.OK)
   @Post('update')
   async update(
@@ -214,22 +214,22 @@ export class AuthController {
     @Body('userId') userId: string,
   ) {
     return await this.AuthService.update(newUser, userId);
-  }
+  }*/
 
-  @HttpCode(HttpStatus.OK)
+  /*@HttpCode(HttpStatus.OK)
   @Post('send-reset-link')
   async sendResetLink(@Body('email') email: string) {
     let link = await this.AuthService.sendResetLink(email);
     return link;
-  }
+  }*/
 
-  @HttpCode(HttpStatus.OK)
+  /*@HttpCode(HttpStatus.OK)
   @Get('get-all-users')
   async getAllUsers() {
     return await this.AuthService.getAllUsers();
-  }
+  }*/
 
-  @Post('upload-avatar')
+  /*@Post('upload-avatar')
   @UseInterceptors(AnyFilesInterceptor())
   async uploadAvatar(
     @UploadedFiles() files: Array<Express.Multer.File>,
@@ -254,5 +254,5 @@ export class AuthController {
     return await this.UserModel.findByIdAndUpdate(userId, {
       $set: { avatars: [filenames[0]] },
     });
-  }
+  }*/
 }
